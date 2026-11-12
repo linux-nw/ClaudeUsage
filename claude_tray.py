@@ -1049,25 +1049,23 @@ class ClaudeUsageTray:
         self.icon_min  = pystray.Icon(APP_NAME_RESET + " Min", img_min, APP_NAME_RESET + " Min", menu)
         _log("run: calling icon.run()")
 
-        def _on_ready_hour(icon):
-            icon.visible = True
-            self._refresh_reset_icons()
+        # Tray-Reihenfolge IMMER (links -> rechts): Session % | Reset Std (H) | Reset Min (M).
+        # Windows setzt das ZULETZT registrierte Icon nach LINKS. Damit Session %
+        # ganz links landet, wird umgekehrt registriert: zuerst Min, dann Std,
+        # zuletzt Session. Die Events stellen sicher, dass jedes Icon im Tray
+        # sitzt, bevor das naechste startet (sonst waere die Reihenfolge ein Rennen).
+        ready_min  = threading.Event()
+        ready_hour = threading.Event()
 
         def _on_ready_min(icon):
             icon.visible = True
             self._refresh_reset_icons()
+            ready_min.set()
 
-        threading.Thread(
-            target=self.icon_hour.run,
-            kwargs={"setup": _on_ready_hour},
-            daemon=True,
-        ).start()
-
-        threading.Thread(
-            target=self.icon_min.run,
-            kwargs={"setup": _on_ready_min},
-            daemon=True,
-        ).start()
+        def _on_ready_hour(icon):
+            icon.visible = True
+            self._refresh_reset_icons()
+            ready_hour.set()
 
         def _on_ready(icon):
             _log("_on_ready: setting visible")
@@ -1077,6 +1075,24 @@ class ClaudeUsageTray:
             _log("_on_ready: done, starting loop")
             threading.Thread(target=self._loop, daemon=True).start()
 
+        # 1. Reset Min (M) — wird zuerst registriert -> landet ganz rechts
+        threading.Thread(
+            target=self.icon_min.run,
+            kwargs={"setup": _on_ready_min},
+            daemon=True,
+        ).start()
+        ready_min.wait(timeout=10)
+
+        # 2. Reset Std (H)
+        threading.Thread(
+            target=self.icon_hour.run,
+            kwargs={"setup": _on_ready_hour},
+            daemon=True,
+        ).start()
+        ready_hour.wait(timeout=10)
+
+        # 3. Session % — zuletzt registriert -> landet ganz links.
+        #    Laeuft im Hauptthread und haelt den Prozess am Leben.
         self.icon.run(setup=_on_ready)
         _log("run: icon.run() returned")
 
