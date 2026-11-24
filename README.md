@@ -1,45 +1,45 @@
 # Claude Usage
 
-**Status:** 🟢 Aktiv
+**Status:** 🟢 Active
 
-Kleine Windows-Tray-App, die deine Claude-Nutzung (Wochenlimit und Sitzungslimit) und den Countdown bis zum Reset als Symbole in der Taskleiste zeigt. Danach braucht sie kein Browserfenster mehr.
+Small Windows tray app that shows your Claude usage (weekly limit and session limit) and the countdown to the reset as icons in the taskbar. After that it needs no browser window.
 
-**Name:** Der Name sagt, was sie tut: Claude-Nutzung im Blick.
-
----
-
-## Nutzung
-
-Voraussetzung: Windows 10 oder 11 mit Python 3.8 oder neuer.
-
-1. `start.bat` ausführen. Das Skript installiert die Abhängigkeiten (aus `wheels/` oder von PyPI), beendet alte Instanzen und startet die App im Hintergrund.
-2. Beim ersten Start öffnet sich ein Browserfenster für den Login bei claude.ai. Danach läuft alles ohne Fenster.
-3. Rechtsklick auf das Tray-Symbol: Aktualisieren, Claude öffnen, erneut einloggen, Debug-Datei, Beenden.
-
-Manuell: `pip install pystray Pillow playwright` und einmal `python -m playwright install chromium`, dann `run.bat` (oder `debug_run.bat` mit sichtbarer Konsole).
+**Name:** The name says what it does: Claude usage at a glance.
 
 ---
 
-## Repo-Struktur
+## Usage
+
+Requirements: Windows 10 or 11 with Python 3.8 or newer.
+
+1. Run `start.bat`. The script installs the dependencies (from `wheels/` or PyPI), closes old instances and starts the app in the background.
+2. On first launch a browser window opens for the login at claude.ai. After that everything runs without a window.
+3. Right-click the tray icon: Refresh, Open Claude, Log in again, Debug file, Quit.
+
+Manual: `pip install pystray Pillow playwright` and once `python -m playwright install chromium`, then `run.bat` (or `debug_run.bat` with a visible console).
+
+---
+
+## Repo structure
 
 ```
-claude_tray.py     die ganze App
-requirements.txt   Python-Abhängigkeiten
-start.bat          startet und installiert bei Bedarf
-setup.bat          installiert aus wheels/
-run.bat            startet ohne Installation
-debug_run.bat      startet mit Konsole
-wheels/            Pakete für die Offline-Installation
+claude_tray.py     the whole app
+requirements.txt   Python dependencies
+start.bat          starts and installs if needed
+setup.bat          installs from wheels/
+run.bat            starts without installing
+debug_run.bat      starts with a console
+wheels/            packages for offline installation
 ```
 
 ---
 
-## Datenschutz
+## Privacy
 
-Die App ruft deine Nutzungsdaten von claude.ai ab. Login-Daten und Einstellungen liegen als Dateien in deinem Benutzerordner (`~/.claude_tray_*`).
+The app fetches your usage data from claude.ai. Login data and settings are stored as files in your user folder (`~/.claude_tray_*`).
 
 ---
 
-## Lizenz
+## License
 
-Noch offen.
+Not decided yet.
