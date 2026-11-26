@@ -1,7 +1,7 @@
 @echo off
 cd /d "%~dp0"
 
-:: Pruefen ob Python vorhanden
+:: Check that Python is installed
 where python >nul 2>&1
 if %errorlevel% neq 0 (
     echo Python nicht gefunden!
@@ -9,7 +9,7 @@ if %errorlevel% neq 0 (
     pause & exit /b 1
 )
 
-:: Abhaengigkeiten installieren wenn noetig
+:: Install dependencies if needed
 python -c "import pystray, PIL, playwright" >nul 2>&1
 if %errorlevel% neq 0 (
     echo Installiere Abhaengigkeiten...
@@ -25,10 +25,10 @@ if %errorlevel% neq 0 (
     )
 )
 
-:: Alle alten Instanzen beenden
+:: Stop all old instances
 taskkill /F /FI "IMAGENAME eq pythonw.exe" /FI "WINDOWTITLE eq Claude*" >nul 2>&1
 
-:: App starten
+:: Start the app
 where pythonw >nul 2>&1
 if %errorlevel% equ 0 (
     start "" pythonw "%~dp0claude_tray.py"
