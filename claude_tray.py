@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Claude Usage Tray
-Login einmalig (sichtbares Edge-Fenster):
-  -> faengt interne API-Antworten ab
-  -> speichert Cookies + Endpoint
-Danach: curl.exe ruft API direkt auf.
-Fallback: Playwright scraped headless wenn curl scheitert.
+Login once (visible Edge window):
+  -> captures internal API responses
+  -> stores cookies + endpoint
+After that: curl.exe calls the API directly.
+Fallback: Playwright scrapes headless if curl fails.
 """
 
 import json
@@ -159,7 +159,7 @@ def _make_ctx(pw, headless=False):
 
 
 # ---------------------------------------------------------------------------
-# Login (einmalig, sichtbares Fenster)
+# Login (once, visible window)
 
 def do_login() -> bool:
     captured_requests  = []
@@ -307,7 +307,7 @@ def api_cfg_valid() -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Fetch via curl.exe (kein Browser nötig)
+# Fetch via curl.exe (no browser needed)
 
 def _curl_get(url: str, cookie_str: str) -> str:
     cmd = [
@@ -369,7 +369,7 @@ def _fetch_usage_curl() -> dict:
     cfg        = load_api_cfg()
     cookie_str = cfg.get("cookie_str", "")
     if not cookie_str:
-        raise Exception("Keine Cookies — bitte einloggen")
+        raise Exception("No cookies - please log in")
 
     # Resolve org_uuid even if it was empty in saved config
     resolved_uuid = _resolve_org_uuid(cfg)
@@ -408,7 +408,7 @@ def _fetch_usage_curl() -> dict:
 
 
 # ---------------------------------------------------------------------------
-# Playwright fallback (headless, nutzt gespeicherte Session)
+# Playwright fallback (headless, uses the stored session)
 
 def _fetch_usage_playwright() -> dict:
     captured = []
